@@ -22,6 +22,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let currentDate = new Date();
     let currentUser = null;
+    let currentFileId = null; // ID of the Google Drive file for storing tasks
 
     // Google API Configuration
     const CLIENT_ID = '1024911854303-2cn1419csvv5rs722g67iff436hl8866.apps.googleusercontent.com';  // Replace with your actual client ID
@@ -51,6 +52,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (isSignedIn) {
             document.getElementById('authorize_button').style.display = 'none';
             document.getElementById('signout_button').style.display = 'block';
+            loadFileId(); // Load file ID from Google Drive
         } else {
             document.getElementById('authorize_button').style.display = 'block';
             document.getElementById('signout_button').style.display = 'none';
@@ -65,30 +67,38 @@ document.addEventListener('DOMContentLoaded', () => {
         gapi.auth2.getAuthInstance().signOut();
     }
 
-    function listFiles() {
+    function loadFileId() {
         gapi.client.drive.files.list({
             'pageSize': 10,
-            'fields': "nextPageToken, files(id, name)"
+            'fields': "nextPageToken, files(id, name)",
+            'q': `'me' in owners and name='tasks_${currentUser}_${currentDate.toDateString()}.json'`
         }).then(function(response) {
             const files = response.result.files;
             if (files.length > 0) {
-                let output = 'Files:<br>';
-                files.forEach(function(file) {
-                    output += `<div>${file.name} (${file.id})</div>`;
-                });
-                document.getElementById('content').innerHTML = output;
+                currentFileId = files[0].id;
             } else {
-                document.getElementById('content').innerHTML = 'No files found.';
+                createFile();
             }
         });
     }
 
-    function renderDate() {
-        currentDateElement.textContent = currentDate.toDateString();
+    function createFile() {
+        gapi.client.drive.files.create({
+            resource: {
+                name: `tasks_${currentUser}_${currentDate.toDateString()}.json`,
+                mimeType: 'application/json',
+            },
+            media: {
+                body: JSON.stringify({})
+            },
+            fields: 'id'
+        }).then(function(response) {
+            currentFileId = response.result.id;
+        });
     }
 
     function saveTasks() {
-        if (!currentUser) return;
+        if (!currentUser || !currentFileId) return;
         const tasks = {};
         subjects.forEach(subject => {
             tasks[subject.name] = [];
@@ -100,44 +110,58 @@ document.addEventListener('DOMContentLoaded', () => {
                 tasks[subject.name].push({ name: taskName, completed, completionTime });
             });
         });
-        localStorage.setItem(`${currentUser}_${currentDate.toDateString()}`, JSON.stringify(tasks));
+
+        const fileContent = JSON.stringify(tasks);
+        gapi.client.drive.files.update({
+            fileId: currentFileId,
+            media: {
+                body: fileContent
+            }
+        }).then(() => {
+            console.log('Tasks saved to Google Drive');
+        });
     }
 
     function loadTasks() {
-        if (!currentUser) return;
-        const tasks = JSON.parse(localStorage.getItem(`${currentUser}_${currentDate.toDateString()}`)) || {};
-        subjectsContainer.innerHTML = '';
-        subjects.forEach(subject => {
-            const subjectDiv = document.createElement('div');
-            subjectDiv.className = 'subject';
-            subjectDiv.id = subject.name;
+        if (!currentUser || !currentFileId) return;
+        gapi.client.drive.files.get({
+            fileId: currentFileId,
+            alt: 'media'
+        }).then(function(response) {
+            const tasks = JSON.parse(response.body);
+            subjectsContainer.innerHTML = '';
+            subjects.forEach(subject => {
+                const subjectDiv = document.createElement('div');
+                subjectDiv.className = 'subject';
+                subjectDiv.id = subject.name;
 
-            const subjectTitle = document.createElement('h2');
-            subjectTitle.textContent = subject.name;
+                const subjectTitle = document.createElement('h2');
+                subjectTitle.textContent = subject.name;
 
-            const addTaskIcon = document.createElement('span');
-            addTaskIcon.className = 'add-task';
-            addTaskIcon.textContent = '✏️';
-            addTaskIcon.addEventListener('click', () => {
-                const taskName = prompt('Enter task name:');
-                if (taskName) {
-                    addTask(subjectDiv, taskName, false, null);
-                    saveTasks();
-                }
+                const addTaskIcon = document.createElement('span');
+                addTaskIcon.className = 'add-task';
+                addTaskIcon.textContent = '✏️';
+                addTaskIcon.addEventListener('click', () => {
+                    const taskName = prompt('Enter task name:');
+                    if (taskName) {
+                        addTask(subjectDiv, taskName, false, null);
+                        saveTasks();
+                    }
+                });
+
+                subjectTitle.appendChild(addTaskIcon);
+                subjectDiv.appendChild(subjectTitle);
+
+                const savedTasks = tasks[subject.name] || [];
+                const taskNames = subject.tasks;
+
+                taskNames.forEach(taskName => {
+                    const savedTask = savedTasks.find(task => task.name === taskName);
+                    addTask(subjectDiv, taskName, savedTask?.completed || false, savedTask?.completionTime);
+                });
+
+                subjectsContainer.appendChild(subjectDiv);
             });
-
-            subjectTitle.appendChild(addTaskIcon);
-            subjectDiv.appendChild(subjectTitle);
-
-            const savedTasks = tasks[subject.name] || [];
-            const taskNames = subject.tasks;
-
-            taskNames.forEach(taskName => {
-                const savedTask = savedTasks.find(task => task.name === taskName);
-                addTask(subjectDiv, taskName, savedTask?.completed || false, savedTask?.completionTime);
-            });
-
-            subjectsContainer.appendChild(subjectDiv);
         });
     }
 
@@ -213,6 +237,10 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    function renderDate() {
+        currentDateElement.textContent = currentDate.toDateString();
+    }
+
     passwordSubmitBtn.addEventListener('click', () => {
         const password = passwordInput.value;
         if (password === 'a2z') {
@@ -227,16 +255,14 @@ document.addEventListener('DOMContentLoaded', () => {
         currentUser = 'Devendra';
         userSelectionPage.style.display = 'none';
         tasksPage.style.display = 'flex';
-        renderDate();
-        loadTasks();
+        loadFileId(); // Load file ID for the selected user
     });
 
     heerCard.addEventListener('click', () => {
         currentUser = 'Heer';
         userSelectionPage.style.display = 'none';
         tasksPage.style.display = 'flex';
-        renderDate();
-        loadTasks();
+        loadFileId(); // Load file ID for the selected user
     });
 
     backToUserSelectionBtn.addEventListener('click', () => {
