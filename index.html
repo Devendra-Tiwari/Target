@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Study Sessions</title>
     <link rel="stylesheet" href="styles.css">
+    <script src="https://apis.google.com/js/api.js"></script>
 </head>
 <body>
     <div id="passwordPage" class="page">
@@ -31,6 +32,15 @@
         <button id="nextDayBtn">Next Day</button>
         <div id="subjectsContainer"></div>
     </div>
+
+    <!-- Google Drive Integration Section -->
+    <div id="authSection">
+        <button id="authorize_button" style="display: none;">Authorize</button>
+        <button id="signout_button" style="display: none;">Sign Out</button>
+        <div id="content"></div>
+    </div>
+
     <script src="script.js"></script>
 </body>
 </html>
+
