@@ -23,6 +23,66 @@ document.addEventListener('DOMContentLoaded', () => {
     let currentDate = new Date();
     let currentUser = null;
 
+    // Google API Configuration
+    const CLIENT_ID = '1024911854303-2cn1419csvv5rs722g67iff436hl8866.apps.googleusercontent.com';  // Replace with your actual client ID
+    const API_KEY = 'AIzaSyDjTf_Fgn1ufEWR_r4p6AhBE7u1B6YNf44';      // Replace with your actual API key
+    const SCOPES = 'https://www.googleapis.com/auth/drive.file';
+
+    // Initialize Google API client
+    function handleClientLoad() {
+        gapi.load('client:auth2', initClient);
+    }
+
+    function initClient() {
+        gapi.client.init({
+            apiKey: API_KEY,
+            clientId: CLIENT_ID,
+            discoveryDocs: ["https://www.googleapis.com/discovery/v1/apis/drive/v3/rest"],
+            scope: SCOPES
+        }).then(function () {
+            gapi.auth2.getAuthInstance().isSignedIn.listen(updateSigninStatus);
+            updateSigninStatus(gapi.auth2.getAuthInstance().isSignedIn.get());
+            document.getElementById('authorize_button').onclick = handleAuthClick;
+            document.getElementById('signout_button').onclick = handleSignoutClick;
+        });
+    }
+
+    function updateSigninStatus(isSignedIn) {
+        if (isSignedIn) {
+            document.getElementById('authorize_button').style.display = 'none';
+            document.getElementById('signout_button').style.display = 'block';
+        } else {
+            document.getElementById('authorize_button').style.display = 'block';
+            document.getElementById('signout_button').style.display = 'none';
+        }
+    }
+
+    function handleAuthClick() {
+        gapi.auth2.getAuthInstance().signIn();
+    }
+
+    function handleSignoutClick() {
+        gapi.auth2.getAuthInstance().signOut();
+    }
+
+    function listFiles() {
+        gapi.client.drive.files.list({
+            'pageSize': 10,
+            'fields': "nextPageToken, files(id, name)"
+        }).then(function(response) {
+            const files = response.result.files;
+            if (files.length > 0) {
+                let output = 'Files:<br>';
+                files.forEach(function(file) {
+                    output += `<div>${file.name} (${file.id})</div>`;
+                });
+                document.getElementById('content').innerHTML = output;
+            } else {
+                document.getElementById('content').innerHTML = 'No files found.';
+            }
+        });
+    }
+
     function renderDate() {
         currentDateElement.textContent = currentDate.toDateString();
     }
@@ -191,6 +251,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     previousDayBtn.addEventListener('click', () => changeDay(-1));
     nextDayBtn.addEventListener('click', () => changeDay(1));
+
+    // Google Drive Integration
+    handleClientLoad();
 
     // Initialize
     passwordPage.style.display = 'flex'; // Show password page on load
