@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task Management</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Password Protection Page -->
+    <div id="passwordPage" class="page">
+        <div class="container">
+            <h1>Enter Password</h1>
+            <input type="password" id="passwordInput" placeholder="Password">
+            <button id="passwordSubmitBtn">Submit</button>
+            <p id="errorMessage"></p>
+        </div>
+    </div>
+
+    <!-- User Selection Page -->
+    <div id="userSelectionPage" class="page hidden">
+        <div class="container">
+            <h1>Select User</h1>
+            <div id="devendraCard" class="user-card">
+                <span class="user-icon">👨</span>
+                <span class="user-name">Devendra</span>
+            </div>
+            <div id="heerCard" class="user-card">
+                <span class="user-icon">👩</span>
+                <span class="user-name">Heer</span>
+            </div>
+            <button id="backToPasswordPageBtn">Back</button>
+        </div>
+    </div>
+
+    <!-- Tasks Page -->
+    <div id="tasksPage" class="page hidden">
+        <div class="container">
+            <h1 id="currentDate"></h1>
+            <div class="navigation-buttons">
+                <button id="previousDayBtn">Previous Day</button>
+                <button id="nextDayBtn">Next Day</button>
+            </div>
+            <div id="subjectsContainer" class="subject-container"></div>
+            <button id="backToUserSelectionBtn">Back</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

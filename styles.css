@@ -1,0 +1,188 @@
+body {
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    background-color: #f0f0f0;
+}
+
+.page {
+    display: none;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #ffffff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.container {
+    text-align: center;
+    padding: 20px;
+    border-radius: 8px;
+    background-color: #ffffff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+    margin-bottom: 20px;
+    font-size: 24px;
+    color: #333;
+}
+
+input[type="password"] {
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    width: 100%;
+    max-width: 300px;
+    margin-bottom: 20px;
+    box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.1);
+}
+
+button {
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    margin: 5px;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+#errorMessage {
+    color: red;
+    margin-top: 10px;
+}
+
+.hidden {
+    display: none;
+}
+
+.user-card {
+    border: 1px solid #ddd;
+    padding: 20px;
+    margin: 10px;
+    cursor: pointer;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.3s, transform 0.3s;
+}
+
+.user-card:hover {
+    background-color: #e9ecef;
+    transform: scale(1.05);
+}
+
+.user-icon {
+    font-size: 24px;
+    margin-right: 10px;
+}
+
+.subject-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.subject {
+    flex: 1;
+    max-width: 300px;
+    margin: 10px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 10px;
+    background-color: #ffffff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.subject h2 {
+    font-size: 20px;
+    margin: 0;
+    color: #333;
+}
+
+.add-task {
+    margin-left: 10px;
+    font-size: 20px;
+    color: #007bff;
+    cursor: pointer;
+}
+
+.add-task:hover {
+    color: #0056b3;
+}
+
+.task {
+    display: flex;
+    align-items: center;
+    margin: 5px 0;
+    padding: 10px;
+    border-radius: 4px;
+    border: 1px solid #ddd;
+    background-color: #ffffff;
+    transition: background-color 0.3s;
+}
+
+.task.completed {
+    background-color: #d4edda;
+}
+
+.task input[type="checkbox"] {
+    margin-right: 10px;
+}
+
+.remove-task, .completion-time {
+    margin-left: 10px;
+    cursor: pointer;
+    font-size: 18px;
+    color: #dc3545;
+}
+
+.remove-task:hover, .completion-time:hover {
+    color: #c82333;
+}
+
+.navigation-buttons {
+    margin: 20px 0;
+}
+
+#previousDayBtn, #nextDayBtn {
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    background-color: #17a2b8;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    margin: 5px;
+}
+
+#previousDayBtn:hover, #nextDayBtn:hover {
+    background-color: #138496;
+}
+
+#backToUserSelectionBtn, #backToPasswordPageBtn {
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    background-color: #6c757d;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    margin: 5px;
+}
+
+#backToUserSelectionBtn:hover, #backToPasswordPageBtn:hover {
+    background-color: #5a6268;
+}
