@@ -12,10 +12,12 @@ body {
     width: 100vw;
     height: 100vh;
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
     background-color: #ffffff;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    overflow: hidden; /* Prevents content from overflowing */
 }
 
 .container {
@@ -24,6 +26,8 @@ body {
     border-radius: 8px;
     background-color: #ffffff;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    max-width: 100%;
+    overflow: hidden; /* Prevents overflow inside container */
 }
 
 h1 {
@@ -78,6 +82,7 @@ button:hover {
     align-items: center;
     justify-content: center;
     transition: background-color 0.3s, transform 0.3s;
+    max-width: 90%;
 }
 
 .user-card:hover {
@@ -135,6 +140,8 @@ button:hover {
     border: 1px solid #ddd;
     background-color: #ffffff;
     transition: background-color 0.3s;
+    max-width: 100%;
+    overflow: hidden; /* Prevents content from overflowing */
 }
 
 .task.completed {
@@ -191,6 +198,7 @@ button:hover {
 @media (max-width: 768px) {
     .container {
         padding: 10px;
+        max-width: 100%;
     }
 
     input[type="password"] {
@@ -200,6 +208,7 @@ button:hover {
     .user-card {
         flex-direction: column;
         text-align: center;
+        max-width: 100%;
     }
 
     .user-icon {
